@@ -59,14 +59,8 @@
       },
       {
         "command": "quickCodeActions.copyReference",
-        "title": "Copy Reference",
+        "title": "⚡ Copy Reference",
         "category": "Quick Code Actions"
-      }
-    ],
-    "submenus": [
-      {
-        "id": "quickCodeActions.submenu",
-        "label": "Quick Code Actions"
       }
     ],
     "menus": {
@@ -82,18 +76,9 @@
       ],
       "editor/context": [
         {
-          "submenu": "quickCodeActions.submenu",
-          "group": "1_modification",
+          "command": "quickCodeActions.copyReference",
+          "group": "z_quickCodeActions",
           "when": "editorLangId =~ /^(javascript|javascriptreact|typescript|typescriptreact)$/"
-        }
-      ],
-      "quickCodeActions.submenu": [
-        {
-          "command": "quickCodeActions.extractToFile",
-          "when": "editorHasSelection"
-        },
-        {
-          "command": "quickCodeActions.copyReference"
         }
       ]
     }
