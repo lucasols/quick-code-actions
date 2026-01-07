@@ -8,11 +8,13 @@
       "isBackground": true,
       "presentation": {
         "reveal": "never"
-      },
-      "group": {
-        "kind": "build",
-        "isDefault": true
       }
+    },
+    {
+      "type": "shell",
+      "label": "Build and package extension",
+      "command": "pnpm build && vsce package",
+      "problemMatcher": []
     }
   ]
 }
