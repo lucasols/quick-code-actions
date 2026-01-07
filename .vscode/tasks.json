@@ -15,6 +15,11 @@
       "label": "Build and package extension",
       "command": "pnpm build && vsce package",
       "problemMatcher": []
+    },
+    {
+      "type": "npm",
+      "script": "install-extension",
+      "problemMatcher": []
     }
   ]
 }
