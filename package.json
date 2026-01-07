@@ -9,9 +9,11 @@
   "scripts": {
     "lint": "pnpm tsc && pnpm eslint",
     "tsc": "tsc -p tsconfig.prod.json",
-    "build": "pnpm lint && pnpm build:no-test",
+    "build": "pnpm lint && pnpm test && pnpm build:no-test",
     "build:no-test": "tsup --minify --dts && vsce package --no-dependencies",
     "dev": "tsup --watch --minify --dts",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "install-extension": "cursor --install-extension $(ls -t quick-code-actions-*.vsix | head -n 1)"
   },
   "keywords": [
@@ -24,7 +26,7 @@
   "devDependencies": {
     "@ls-stack/extended-lint": "^0.14.2",
     "@types/node": "^22.9.0",
-    "@types/vscode": "~1.83.0",
+    "@types/vscode": "^1.90.0",
     "@typescript-eslint/eslint-plugin": "^8.13.0",
     "@typescript-eslint/parser": "^8.13.0",
     "@vscode/vsce": "^3.2.1",
@@ -34,10 +36,12 @@
     "prettier": "^3.3.3",
     "tsup": "^8.3.5",
     "typescript": "^5.6.3",
-    "typescript-eslint": "^8.13.0"
+    "typescript-eslint": "^8.13.0",
+    "vitest": "^2.1.0",
+    "jest-mock-vscode": "^4.0.0"
   },
   "engines": {
-    "vscode": ">=1.83.0",
+    "vscode": ">=1.90.0",
     "node": ">=18.0.0"
   },
   "activationEvents": [
@@ -52,6 +56,11 @@
         "command": "quickCodeActions.extractToFile",
         "title": "Extract to new file",
         "category": "Quick Code Actions"
+      },
+      {
+        "command": "quickCodeActions.copyReference",
+        "title": "Copy Reference",
+        "category": "Quick Code Actions"
       }
     ],
     "menus": {
@@ -59,6 +68,10 @@
         {
           "command": "quickCodeActions.extractToFile",
           "when": "editorHasSelection && editorLangId =~ /^(javascript|javascriptreact|typescript|typescriptreact)$/"
+        },
+        {
+          "command": "quickCodeActions.copyReference",
+          "when": "editorLangId =~ /^(javascript|javascriptreact|typescript|typescriptreact)$/"
         }
       ]
     }

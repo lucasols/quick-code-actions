@@ -2,11 +2,13 @@ import * as vscode from 'vscode'
 import type { Refactoring, RefactoringContext } from './refactorings/types'
 import { SUPPORTED_LANGUAGES } from './refactorings/types'
 import { extractToFileRefactoring } from './refactorings/extract-to-file'
+import { copyReferenceRefactoring } from './refactorings/copy-reference'
 
 class QuickCodeActionsProvider implements vscode.CodeActionProvider {
   static readonly providedCodeActionKinds = [
     vscode.CodeActionKind.Refactor,
     vscode.CodeActionKind.RefactorExtract,
+    vscode.CodeActionKind.QuickFix,
   ]
 
   constructor(private readonly refactorings: Refactoring[]) {}
@@ -15,10 +17,6 @@ class QuickCodeActionsProvider implements vscode.CodeActionProvider {
     document: vscode.TextDocument,
     range: vscode.Range | vscode.Selection,
   ): vscode.CodeAction[] {
-    if (range.isEmpty) {
-      return []
-    }
-
     const context: RefactoringContext = {
       document,
       range,
@@ -38,7 +36,7 @@ class QuickCodeActionsProvider implements vscode.CodeActionProvider {
 }
 
 export function activate(context: vscode.ExtensionContext) {
-  const refactorings = [extractToFileRefactoring]
+  const refactorings = [extractToFileRefactoring, copyReferenceRefactoring]
 
   const provider = new QuickCodeActionsProvider(refactorings)
 
