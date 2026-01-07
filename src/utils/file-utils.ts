@@ -1,5 +1,6 @@
 import * as path from 'path'
 import type { SupportedLanguageId } from '../refactorings/types'
+import { extractDeclarationNames } from './ast-utils'
 
 export function getExtensionForLanguage(languageId: SupportedLanguageId): string {
   switch (languageId) {
@@ -26,21 +27,11 @@ export function suggestFileName(
   languageId: SupportedLanguageId,
 ): string {
   const extension = getExtensionForLanguage(languageId)
+  const names = extractDeclarationNames(selectedText)
+  const firstName = names[0]
 
-  const patterns = [
-    /(?:export\s+)?(?:async\s+)?function\s+(\w+)/,
-    /(?:export\s+)?class\s+(\w+)/,
-    /(?:export\s+)?const\s+(\w+)\s*=/,
-    /(?:export\s+)?interface\s+(\w+)/,
-    /(?:export\s+)?type\s+(\w+)\s*=/,
-  ]
-
-  for (const pattern of patterns) {
-    const match = selectedText.match(pattern)
-    if (match?.[1]) {
-      const name = toKebabCase(match[1])
-      return `./${name}${extension}`
-    }
+  if (firstName) {
+    return `./${toKebabCase(firstName)}${extension}`
   }
 
   return `./extracted${extension}`
@@ -74,10 +65,3 @@ export function getRelativeImportPath(fromPath: string, toPath: string): string 
   return relativePath
 }
 
-export function deriveExportName(filePath: string): string {
-  const baseName = path.basename(filePath, path.extname(filePath))
-  return baseName
-    .split(/[-_]/)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join('')
-}

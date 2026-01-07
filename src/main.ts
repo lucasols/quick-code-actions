@@ -7,8 +7,7 @@ import { copyReferenceRefactoring } from './refactorings/copy-reference'
 class QuickCodeActionsProvider implements vscode.CodeActionProvider {
   static readonly providedCodeActionKinds = [
     vscode.CodeActionKind.Refactor,
-    vscode.CodeActionKind.RefactorExtract,
-    vscode.CodeActionKind.QuickFix,
+    vscode.CodeActionKind.RefactorMove,
   ]
 
   constructor(private readonly refactorings: Refactoring[]) {}
@@ -36,9 +35,11 @@ class QuickCodeActionsProvider implements vscode.CodeActionProvider {
 }
 
 export function activate(context: vscode.ExtensionContext) {
-  const refactorings = [extractToFileRefactoring, copyReferenceRefactoring]
+  const codeActionRefactorings = [extractToFileRefactoring]
+  const contextMenuCommands = [copyReferenceRefactoring]
+  const allRefactorings = [...codeActionRefactorings, ...contextMenuCommands]
 
-  const provider = new QuickCodeActionsProvider(refactorings)
+  const provider = new QuickCodeActionsProvider(codeActionRefactorings)
 
   const providerDisposable = vscode.languages.registerCodeActionsProvider(
     SUPPORTED_LANGUAGES.map((language) => ({ language })),
@@ -48,7 +49,7 @@ export function activate(context: vscode.ExtensionContext) {
     },
   )
 
-  for (const refactoring of refactorings) {
+  for (const refactoring of allRefactorings) {
     const commandDisposable = vscode.commands.registerCommand(
       `quickCodeActions.${refactoring.id}`,
       async () => {

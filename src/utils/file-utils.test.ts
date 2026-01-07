@@ -4,8 +4,11 @@ import {
   suggestFileName,
   resolveTargetPath,
   getRelativeImportPath,
-  deriveExportName,
 } from './file-utils'
+import {
+  extractDeclarationNames,
+  findReferencedNames,
+} from './ast-utils'
 
 describe('file-utils', () => {
   describe('getExtensionForLanguage', () => {
@@ -148,25 +151,93 @@ describe('file-utils', () => {
     })
   })
 
-  describe('deriveExportName', () => {
-    it('should convert simple name to PascalCase', () => {
-      expect(deriveExportName('utils.ts')).toBe('Utils')
+})
+
+describe('ast-utils', () => {
+  describe('extractDeclarationNames', () => {
+    it('should extract function name', () => {
+      expect(extractDeclarationNames('function myFunc() {}')).toEqual(['myFunc'])
     })
 
-    it('should convert kebab-case to PascalCase', () => {
-      expect(deriveExportName('my-helper.ts')).toBe('MyHelper')
+    it('should extract async function name', () => {
+      expect(extractDeclarationNames('async function fetchData() {}')).toEqual([
+        'fetchData',
+      ])
     })
 
-    it('should convert snake_case to PascalCase', () => {
-      expect(deriveExportName('my_helper.ts')).toBe('MyHelper')
+    it('should extract exported function name', () => {
+      expect(extractDeclarationNames('export function helper() {}')).toEqual([
+        'helper',
+      ])
     })
 
-    it('should handle paths with directories', () => {
-      expect(deriveExportName('./helpers/string-utils.ts')).toBe('StringUtils')
+    it('should extract const name', () => {
+      expect(extractDeclarationNames('const myConst = 123')).toEqual(['myConst'])
     })
 
-    it('should handle multiple separators', () => {
-      expect(deriveExportName('my-awesome_helper.ts')).toBe('MyAwesomeHelper')
+    it('should extract class name', () => {
+      expect(extractDeclarationNames('class MyClass {}')).toEqual(['MyClass'])
+    })
+
+    it('should extract interface name', () => {
+      expect(extractDeclarationNames('interface MyInterface {}')).toEqual([
+        'MyInterface',
+      ])
+    })
+
+    it('should extract type name', () => {
+      expect(extractDeclarationNames('type MyType = string')).toEqual(['MyType'])
+    })
+
+    it('should extract enum name', () => {
+      expect(extractDeclarationNames('enum Status { Active }')).toEqual([
+        'Status',
+      ])
+    })
+
+    it('should return empty array for plain expressions', () => {
+      expect(extractDeclarationNames('1 + 2')).toEqual([])
+    })
+
+    it('should extract multiple declarations', () => {
+      const code = `
+        const a = 1
+        function b() {}
+        class C {}
+      `
+      expect(extractDeclarationNames(code)).toEqual(['a', 'b', 'C'])
+    })
+  })
+
+  describe('findReferencedNames', () => {
+    it('should find referenced names in code', () => {
+      expect(findReferencedNames('console.log(x)', ['x'])).toEqual(['x'])
+    })
+
+    it('should return empty when name is not referenced', () => {
+      expect(findReferencedNames('console.log(y)', ['x'])).toEqual([])
+    })
+
+    it('should not match declarations as references', () => {
+      expect(findReferencedNames('const foo = 1', ['foo'])).toEqual([])
+    })
+
+    it('should find function calls', () => {
+      expect(findReferencedNames('helper()', ['helper'])).toEqual(['helper'])
+    })
+
+    it('should find multiple references', () => {
+      const code = 'console.log(a, b)'
+      expect(findReferencedNames(code, ['a', 'b', 'c'])).toEqual(['a', 'b'])
+    })
+
+    it('should not match parameter declarations', () => {
+      expect(findReferencedNames('function foo(x) {}', ['x'])).toEqual([])
+    })
+
+    it('should find references inside functions', () => {
+      const code = 'function test() { return helper() }'
+      expect(findReferencedNames(code, ['helper'])).toEqual(['helper'])
     })
   })
 })

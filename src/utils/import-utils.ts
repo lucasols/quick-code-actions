@@ -1,42 +1,51 @@
+import * as ts from 'typescript'
+
 export function generateImportStatement(
   importPath: string,
-  exportName: string | undefined,
+  names: string[],
 ): string {
-  if (!exportName) {
+  if (names.length === 0) {
     return `import '${importPath}'`
   }
 
-  return `import { ${exportName} } from '${importPath}'`
+  return `import { ${names.join(', ')} } from '${importPath}'`
 }
 
-export function generateExportWrapper(
-  code: string,
-  exportName: string | undefined,
-): string {
+function hasExportModifier(node: ts.Node): boolean {
+  const modifiers = ts.canHaveModifiers(node) ? ts.getModifiers(node) : undefined
+  return modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword) ?? false
+}
+
+export function generateExportStatement(code: string): string {
   const trimmedCode = code.trim()
 
-  if (trimmedCode.startsWith('export ')) {
-    return `${trimmedCode}\n`
-  }
+  const sourceFile = ts.createSourceFile(
+    'temp.ts',
+    trimmedCode,
+    ts.ScriptTarget.Latest,
+    true,
+  )
 
-  const declarationPatterns = [
-    /^(async\s+)?function\s+\w+/,
-    /^class\s+\w+/,
-    /^const\s+\w+\s*=/,
-    /^let\s+\w+\s*=/,
-    /^interface\s+\w+/,
-    /^type\s+\w+\s*=/,
-  ]
+  let allExported = true
 
-  for (const pattern of declarationPatterns) {
-    if (pattern.test(trimmedCode)) {
-      return `export ${trimmedCode}\n`
+  for (const statement of sourceFile.statements) {
+    const isDeclaration =
+      ts.isFunctionDeclaration(statement) ||
+      ts.isClassDeclaration(statement) ||
+      ts.isInterfaceDeclaration(statement) ||
+      ts.isTypeAliasDeclaration(statement) ||
+      ts.isEnumDeclaration(statement) ||
+      ts.isVariableStatement(statement)
+
+    if (isDeclaration && !hasExportModifier(statement)) {
+      allExported = false
+      break
     }
   }
 
-  if (exportName) {
-    return `export const ${exportName} = ${trimmedCode}\n`
+  if (allExported) {
+    return `${trimmedCode}\n`
   }
 
-  return `${trimmedCode}\n`
+  return `export ${trimmedCode}\n`
 }

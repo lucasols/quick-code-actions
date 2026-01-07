@@ -1,19 +1,25 @@
 import * as vscode from 'vscode'
 import * as path from 'path'
 import type { Refactoring, RefactoringContext, SupportedLanguageId } from './types'
-import { isSupportedLanguage } from './types'
+import { isSupportedLanguage, CODE_ACTION_PREFIX } from './types'
 import {
   suggestFileName,
   resolveTargetPath,
   getRelativeImportPath,
-  deriveExportName,
 } from '../utils/file-utils'
-import { generateImportStatement, generateExportWrapper } from '../utils/import-utils'
+import {
+  generateExportStatement,
+  generateImportStatement,
+} from '../utils/import-utils'
+import {
+  extractDeclarationNames,
+  findReferencedNames,
+} from '../utils/ast-utils'
 
 export const extractToFileRefactoring: Refactoring = {
   id: 'extractToFile',
-  title: 'Extract to new file',
-  kind: vscode.CodeActionKind.RefactorExtract,
+  title: `${CODE_ACTION_PREFIX} Improved move to file`,
+  kind: vscode.CodeActionKind.RefactorMove,
 
   canApply(context: RefactoringContext): boolean {
     if (!context.selectedText.trim()) {
@@ -79,26 +85,8 @@ export const extractToFileRefactoring: Refactoring = {
       // File does not exist, proceed
     }
 
-    const suggestedExportName = deriveExportName(inputPath)
-    const exportName = await vscode.window.showInputBox({
-      prompt: 'Enter the export name (leave empty for no named export wrapper)',
-      value: suggestedExportName,
-    })
-
-    if (exportName === undefined) {
-      return
-    }
-
-    const newFileContent = generateExportWrapper(
-      selectedText,
-      exportName || undefined,
-    )
-
-    const importPath = getRelativeImportPath(currentFilePath, targetPath)
-    const importStatement = generateImportStatement(
-      importPath,
-      exportName || undefined,
-    )
+    const declaredNames = extractDeclarationNames(selectedText)
+    const newFileContent = generateExportStatement(selectedText)
 
     const encoder = new TextEncoder()
     await vscode.workspace.fs.writeFile(
@@ -107,7 +95,22 @@ export const extractToFileRefactoring: Refactoring = {
     )
 
     const edit = new vscode.WorkspaceEdit()
-    edit.replace(document.uri, range, importStatement)
+
+    const documentText = document.getText()
+    const remainingCode = documentText.replace(selectedText, '')
+    const referencedNames = findReferencedNames(remainingCode, declaredNames)
+
+    if (referencedNames.length > 0) {
+      const importPath = getRelativeImportPath(currentFilePath, targetPath)
+      const importStatement = generateImportStatement(
+        importPath,
+        referencedNames,
+      )
+      edit.replace(document.uri, range, importStatement)
+    } else {
+      edit.delete(document.uri, range)
+    }
+
     await vscode.workspace.applyEdit(edit)
 
     const newDocument = await vscode.workspace.openTextDocument(targetPath)

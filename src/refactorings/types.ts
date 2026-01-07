@@ -21,6 +21,8 @@ export type SupportedLanguageId =
   | 'typescript'
   | 'typescriptreact'
 
+export const CODE_ACTION_PREFIX = '⚡'
+
 export const SUPPORTED_LANGUAGES: SupportedLanguageId[] = [
   'javascript',
   'javascriptreact',

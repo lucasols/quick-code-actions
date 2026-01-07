@@ -54,13 +54,19 @@
     "commands": [
       {
         "command": "quickCodeActions.extractToFile",
-        "title": "Extract to new file",
+        "title": "Improved move to file",
         "category": "Quick Code Actions"
       },
       {
         "command": "quickCodeActions.copyReference",
         "title": "Copy Reference",
         "category": "Quick Code Actions"
+      }
+    ],
+    "submenus": [
+      {
+        "id": "quickCodeActions.submenu",
+        "label": "Quick Code Actions"
       }
     ],
     "menus": {
@@ -72,6 +78,22 @@
         {
           "command": "quickCodeActions.copyReference",
           "when": "editorLangId =~ /^(javascript|javascriptreact|typescript|typescriptreact)$/"
+        }
+      ],
+      "editor/context": [
+        {
+          "submenu": "quickCodeActions.submenu",
+          "group": "1_modification",
+          "when": "editorLangId =~ /^(javascript|javascriptreact|typescript|typescriptreact)$/"
+        }
+      ],
+      "quickCodeActions.submenu": [
+        {
+          "command": "quickCodeActions.extractToFile",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "quickCodeActions.copyReference"
         }
       ]
     }

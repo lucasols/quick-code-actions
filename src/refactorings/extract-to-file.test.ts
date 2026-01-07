@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import * as vscode from 'vscode'
 import { extractToFileRefactoring } from './extract-to-file'
-import type { RefactoringContext } from './types'
+import { CODE_ACTION_PREFIX, type RefactoringContext } from './types'
 
 function createMockDocument(
   filePath: string,
@@ -76,8 +76,8 @@ describe('extractToFileRefactoring', () => {
       const context = createContext('/src/file.ts', 'typescript', 'const x = 1')
       const action = extractToFileRefactoring.createAction(context)
 
-      expect(action.title).toBe('Extract to new file')
-      expect(action.kind).toBe(vscode.CodeActionKind.RefactorExtract)
+      expect(action.title).toBe(`${CODE_ACTION_PREFIX} Improved move to file`)
+      expect(action.kind).toBe(vscode.CodeActionKind.RefactorMove)
       expect(action.command?.command).toBe('quickCodeActions.extractToFile')
     })
   })
@@ -100,22 +100,11 @@ describe('extractToFileRefactoring', () => {
       expect(vscode.workspace.fs.writeFile).not.toHaveBeenCalled()
     })
 
-    it('should cancel when user cancels export name input', async () => {
-      vi.spyOn(vscode.window, 'showInputBox')
-        .mockResolvedValueOnce('./new-file.ts')
-        .mockResolvedValueOnce(undefined)
-
-      const context = createContext('/src/file.ts', 'typescript', 'const x = 1')
-      await extractToFileRefactoring.execute(context)
-
-      expect(vscode.workspace.fs.writeFile).not.toHaveBeenCalled()
-    })
-
     it('should ask for confirmation when file exists', async () => {
       vi.spyOn(vscode.workspace.fs, 'stat').mockResolvedValue({} as vscode.FileStat)
-      vi.spyOn(vscode.window, 'showInputBox')
-        .mockResolvedValueOnce('./existing-file.ts')
-        .mockResolvedValueOnce('ExistingFile')
+      vi.spyOn(vscode.window, 'showInputBox').mockResolvedValueOnce(
+        './existing-file.ts',
+      )
       vi.spyOn(vscode.window, 'showWarningMessage').mockResolvedValue('No' as unknown as vscode.MessageItem)
 
       const context = createContext('/src/file.ts', 'typescript', 'const x = 1')
@@ -131,9 +120,9 @@ describe('extractToFileRefactoring', () => {
 
     it('should proceed with overwrite when user confirms', async () => {
       vi.spyOn(vscode.workspace.fs, 'stat').mockResolvedValue({} as vscode.FileStat)
-      vi.spyOn(vscode.window, 'showInputBox')
-        .mockResolvedValueOnce('./existing-file.ts')
-        .mockResolvedValueOnce('ExistingFile')
+      vi.spyOn(vscode.window, 'showInputBox').mockResolvedValueOnce(
+        './existing-file.ts',
+      )
       vi.spyOn(vscode.window, 'showWarningMessage').mockResolvedValue('Yes' as unknown as vscode.MessageItem)
 
       const context = createContext('/src/file.ts', 'typescript', 'const x = 1')
@@ -143,9 +132,9 @@ describe('extractToFileRefactoring', () => {
     })
 
     it('should create new file and replace selection', async () => {
-      vi.spyOn(vscode.window, 'showInputBox')
-        .mockResolvedValueOnce('./new-util.ts')
-        .mockResolvedValueOnce('NewUtil')
+      vi.spyOn(vscode.window, 'showInputBox').mockResolvedValueOnce(
+        './new-util.ts',
+      )
 
       const context = createContext('/src/file.ts', 'typescript', 'const x = 1')
       await extractToFileRefactoring.execute(context)
