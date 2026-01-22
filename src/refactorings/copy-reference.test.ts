@@ -76,8 +76,9 @@ describe('copyReferenceRefactoring', () => {
       await copyReferenceRefactoring.execute(context)
 
       expect(vscode.env.clipboard.writeText).toHaveBeenCalledWith('@src/file.ts')
-      expect(vscode.window.showInformationMessage).toHaveBeenCalledWith(
+      expect(vscode.window.setStatusBarMessage).toHaveBeenCalledWith(
         'Copied: @src/file.ts',
+        3000,
       )
     })
 
