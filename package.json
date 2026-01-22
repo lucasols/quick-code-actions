@@ -45,10 +45,7 @@
     "node": ">=18.0.0"
   },
   "activationEvents": [
-    "onLanguage:javascript",
-    "onLanguage:javascriptreact",
-    "onLanguage:typescript",
-    "onLanguage:typescriptreact"
+    "onStartupFinished"
   ],
   "contributes": {
     "commands": [
@@ -75,8 +72,7 @@
           "when": "editorHasSelection && editorLangId =~ /^(javascript|javascriptreact|typescript|typescriptreact)$/"
         },
         {
-          "command": "quickCodeActions.copyReference",
-          "when": "editorLangId =~ /^(javascript|javascriptreact|typescript|typescriptreact)$/"
+          "command": "quickCodeActions.copyReference"
         },
         {
           "command": "quickCodeActions.moveFileTo",
@@ -86,8 +82,7 @@
       "editor/context": [
         {
           "command": "quickCodeActions.copyReference",
-          "group": "z_quickCodeActions",
-          "when": "editorLangId =~ /^(javascript|javascriptreact|typescript|typescriptreact)$/"
+          "group": "z_quickCodeActions"
         },
         {
           "command": "quickCodeActions.moveFileTo",
