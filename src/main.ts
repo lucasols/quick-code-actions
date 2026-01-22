@@ -3,6 +3,7 @@ import type { Refactoring, RefactoringContext } from './refactorings/types'
 import { SUPPORTED_LANGUAGES } from './refactorings/types'
 import { extractToFileRefactoring } from './refactorings/extract-to-file'
 import { copyReferenceRefactoring } from './refactorings/copy-reference'
+import { moveFileToCommand } from './commands/move-file-to'
 
 class QuickCodeActionsProvider implements vscode.CodeActionProvider {
   static readonly providedCodeActionKinds = [
@@ -71,4 +72,8 @@ export function activate(context: vscode.ExtensionContext) {
   }
 
   context.subscriptions.push(providerDisposable)
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('quickCodeActions.moveFileTo', moveFileToCommand),
+  )
 }

@@ -60,6 +60,6 @@ export const copyReferenceRefactoring: Refactoring = {
     }
 
     await vscode.env.clipboard.writeText(reference)
-    vscode.window.showInformationMessage(`Copied: ${reference}`)
+    vscode.window.setStatusBarMessage(`Copied: ${reference}`, 3000)
   },
 }

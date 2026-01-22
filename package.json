@@ -61,6 +61,11 @@
         "command": "quickCodeActions.copyReference",
         "title": "⚡ Copy Reference",
         "category": "Quick Code Actions"
+      },
+      {
+        "command": "quickCodeActions.moveFileTo",
+        "title": "Move File To...",
+        "category": "Quick Code Actions"
       }
     ],
     "menus": {
@@ -72,6 +77,10 @@
         {
           "command": "quickCodeActions.copyReference",
           "when": "editorLangId =~ /^(javascript|javascriptreact|typescript|typescriptreact)$/"
+        },
+        {
+          "command": "quickCodeActions.moveFileTo",
+          "when": "editorLangId =~ /^(javascript|javascriptreact|typescript|typescriptreact)$/"
         }
       ],
       "editor/context": [
@@ -79,6 +88,18 @@
           "command": "quickCodeActions.copyReference",
           "group": "z_quickCodeActions",
           "when": "editorLangId =~ /^(javascript|javascriptreact|typescript|typescriptreact)$/"
+        },
+        {
+          "command": "quickCodeActions.moveFileTo",
+          "group": "z_quickCodeActions",
+          "when": "editorLangId =~ /^(javascript|javascriptreact|typescript|typescriptreact)$/"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "quickCodeActions.moveFileTo",
+          "group": "z_quickCodeActions",
+          "when": "resourceLangId =~ /^(javascript|javascriptreact|typescript|typescriptreact)$/"
         }
       ]
     }
