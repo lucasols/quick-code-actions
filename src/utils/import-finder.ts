@@ -1,8 +1,9 @@
-import * as vscode from 'vscode'
+import * as fs from 'fs/promises'
 import * as path from 'path'
 import * as ts from 'typescript'
+import * as vscode from 'vscode'
 import type { TsConfig } from './tsconfig-utils'
-import { resolveAliasToPath, getAliasForPath } from './tsconfig-utils'
+import { getAliasForPath, resolveAliasToPath } from './tsconfig-utils'
 
 export interface ImportInfo {
   importPath: string
@@ -116,10 +117,7 @@ export async function findFilesImporting(
     return []
   }
 
-  const files = await vscode.workspace.findFiles(
-    '**/*.{ts,tsx,js,jsx}',
-    '**/node_modules/**',
-  )
+  const files = await vscode.workspace.findFiles('**/*.{ts,tsx,js,jsx}')
 
   const results: FileWithImports[] = []
   const normalizedTarget = normalizePathForComparison(targetPath)
@@ -132,8 +130,7 @@ export async function findFilesImporting(
     }
 
     try {
-      const document = await vscode.workspace.openTextDocument(file)
-      const content = document.getText()
+      const content = await fs.readFile(file.fsPath, 'utf-8')
       const imports = parseImports(content)
 
       const matchingImports = imports.filter((imp) => {
