@@ -14,7 +14,7 @@
     "dev": "tsup --watch --minify --dts",
     "test": "vitest run",
     "test:watch": "vitest",
-    "install-extension": "cursor --install-extension $(ls -t quick-code-actions-*.vsix | head -n 1)"
+    "install-extension": "code --install-extension $(ls -t quick-code-actions-*.vsix | head -n 1)"
   },
   "keywords": [
     "refactoring",
