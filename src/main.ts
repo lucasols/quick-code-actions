@@ -4,6 +4,8 @@ import { SUPPORTED_LANGUAGES } from './refactorings/types'
 import { extractToFileRefactoring } from './refactorings/extract-to-file'
 import { copyReferenceRefactoring } from './refactorings/copy-reference'
 import { moveFileToCommand } from './commands/move-file-to'
+import { syncFileNameCommand } from './commands/sync-file-name'
+import { renameExportCommand } from './commands/rename-export'
 
 class QuickCodeActionsProvider implements vscode.CodeActionProvider {
   static readonly providedCodeActionKinds = [
@@ -75,5 +77,13 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.commands.registerCommand('quickCodeActions.moveFileTo', moveFileToCommand),
+  )
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('quickCodeActions.syncFileName', syncFileNameCommand),
+  )
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('quickCodeActions.renameExport', renameExportCommand),
   )
 }

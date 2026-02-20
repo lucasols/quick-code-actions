@@ -63,6 +63,16 @@
         "command": "quickCodeActions.moveFileTo",
         "title": "Move File To...",
         "category": "Quick Code Actions"
+      },
+      {
+        "command": "quickCodeActions.syncFileName",
+        "title": "Sync File Name with Export",
+        "category": "Quick Code Actions"
+      },
+      {
+        "command": "quickCodeActions.renameExport",
+        "title": "Rename Export and File",
+        "category": "Quick Code Actions"
       }
     ],
     "menus": {
@@ -77,6 +87,14 @@
         {
           "command": "quickCodeActions.moveFileTo",
           "when": "editorLangId =~ /^(javascript|javascriptreact|typescript|typescriptreact)$/"
+        },
+        {
+          "command": "quickCodeActions.syncFileName",
+          "when": "editorLangId =~ /^(javascript|javascriptreact|typescript|typescriptreact)$/"
+        },
+        {
+          "command": "quickCodeActions.renameExport",
+          "when": "editorLangId =~ /^(javascript|javascriptreact|typescript|typescriptreact)$/"
         }
       ],
       "editor/context": [
@@ -86,6 +104,16 @@
         },
         {
           "command": "quickCodeActions.moveFileTo",
+          "group": "z_quickCodeActions",
+          "when": "editorLangId =~ /^(javascript|javascriptreact|typescript|typescriptreact)$/"
+        },
+        {
+          "command": "quickCodeActions.syncFileName",
+          "group": "z_quickCodeActions",
+          "when": "editorLangId =~ /^(javascript|javascriptreact|typescript|typescriptreact)$/"
+        },
+        {
+          "command": "quickCodeActions.renameExport",
           "group": "z_quickCodeActions",
           "when": "editorLangId =~ /^(javascript|javascriptreact|typescript|typescriptreact)$/"
         }
