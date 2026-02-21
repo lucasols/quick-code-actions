@@ -2,7 +2,7 @@ import * as vscode from 'vscode'
 import * as path from 'path'
 import { isSupportedLanguage } from '../refactorings/types'
 import { extractExports, resolveMainExport } from '../utils/export-utils'
-import { toKebabCase, getExtensionForLanguage } from '../utils/file-utils'
+import { getExtensionForLanguage } from '../utils/file-utils'
 import { renameFileWithImportUpdates } from '../utils/rename-file-utils'
 
 export async function renameExportCommand(): Promise<void> {
@@ -85,7 +85,7 @@ export async function renameExportCommand(): Promise<void> {
 
       const currentPath = document.uri.fsPath
       const extension = getExtensionForLanguage(languageId)
-      const newFileName = `${toKebabCase(newName)}${extension}`
+      const newFileName = `${newName}${extension}`
       const currentFileName = path.basename(currentPath)
 
       if (currentFileName === newFileName) {

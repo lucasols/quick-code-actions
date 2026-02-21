@@ -3,7 +3,7 @@ import * as path from 'path'
 import * as fs from 'fs'
 import { isSupportedLanguage } from '../refactorings/types'
 import { extractExports, resolveMainExport } from '../utils/export-utils'
-import { toKebabCase, getExtensionForLanguage } from '../utils/file-utils'
+import { getExtensionForLanguage } from '../utils/file-utils'
 import { renameFileWithImportUpdates } from '../utils/rename-file-utils'
 
 async function fileExists(filePath: string): Promise<boolean> {
@@ -49,7 +49,7 @@ export async function syncFileNameCommand(): Promise<void> {
   }
 
   const extension = getExtensionForLanguage(languageId)
-  const newFileName = `${toKebabCase(mainExport.name)}${extension}`
+  const newFileName = `${mainExport.name}${extension}`
   const currentPath = document.uri.fsPath
   const currentDir = path.dirname(currentPath)
   const currentFileName = path.basename(currentPath)

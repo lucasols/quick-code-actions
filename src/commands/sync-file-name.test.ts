@@ -62,7 +62,7 @@ describe('sync-file-name', () => {
       document: {
         languageId: 'typescript',
         getText: vi.fn().mockReturnValue('export function myHelper() {}'),
-        uri: { fsPath: '/src/my-helper.ts' },
+        uri: { fsPath: '/src/myHelper.ts' },
         offsetAt: vi.fn().mockReturnValue(0),
       },
       selection: { active: { line: 0, character: 0 } },
