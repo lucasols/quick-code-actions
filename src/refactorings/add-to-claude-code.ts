@@ -18,9 +18,33 @@ function getWorkspaceRelativePath(filePath: string): string {
   return path.basename(filePath)
 }
 
-export const copyReferenceRefactoring: Refactoring = {
-  id: 'copyReference',
-  title: 'Copy Reference',
+function buildReference(relativePath: string, range: vscode.Range): string {
+  if (range.isEmpty) {
+    return `@${relativePath}`
+  }
+
+  const startLine = range.start.line + 1
+  const endLine =
+    range.end.character === 0 && range.end.line > range.start.line
+      ? range.end.line
+      : range.end.line + 1
+
+  if (startLine === endLine) {
+    return `@${relativePath}#L${startLine}`
+  }
+
+  return `@${relativePath}#L${startLine}-${endLine}`
+}
+
+function findClaudeTerminal(): vscode.Terminal | undefined {
+  return vscode.window.terminals.find((terminal) =>
+    terminal.name.toLowerCase().includes('claude'),
+  )
+}
+
+export const addToClaudeCodeRefactoring: Refactoring = {
+  id: 'addToClaudeCode',
+  title: 'Add to Claude Code',
   kind: vscode.CodeActionKind.QuickFix,
 
   canApply(_context: RefactoringContext): boolean {
@@ -43,26 +67,18 @@ export const copyReferenceRefactoring: Refactoring = {
     const { document, range } = context
     const filePath = document.uri.fsPath
     const relativePath = getWorkspaceRelativePath(filePath)
+    const reference = buildReference(relativePath, range)
 
-    let reference: string
+    const claudeTerminal = findClaudeTerminal()
 
-    if (range.isEmpty) {
-      reference = `@${relativePath}`
-    } else {
-      const startLine = range.start.line + 1
-      const endLine =
-        range.end.character === 0 && range.end.line > range.start.line
-          ? range.end.line
-          : range.end.line + 1
-
-      if (startLine === endLine) {
-        reference = `@${relativePath}#L${startLine}`
-      } else {
-        reference = `@${relativePath}#L${startLine}-${endLine}`
-      }
+    if (!claudeTerminal) {
+      await vscode.window.showErrorMessage(
+        'Claude Code terminal not found. Make sure Claude Code is running.',
+      )
+      return
     }
 
-    await vscode.env.clipboard.writeText(reference)
-    vscode.window.setStatusBarMessage(`Copied: ${reference}`, 3000)
+    claudeTerminal.show()
+    claudeTerminal.sendText(` ${reference} `, false)
   },
 }

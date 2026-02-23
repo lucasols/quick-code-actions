@@ -107,6 +107,22 @@ describe('copyReferenceRefactoring', () => {
       )
     })
 
+    it('should treat selection ending at char 0 of next line as single line', async () => {
+      const context = createContext('/workspace/src/file.ts', 4, 0, 5, 0, 'const x = 1\n')
+
+      await copyReferenceRefactoring.execute(context)
+
+      expect(vscode.env.clipboard.writeText).toHaveBeenCalledWith('@src/file.ts#L5')
+    })
+
+    it('should treat multi-line selection ending at char 0 of next line as excluding that line', async () => {
+      const context = createContext('/workspace/src/file.ts', 4, 0, 8, 0, 'selected code\n')
+
+      await copyReferenceRefactoring.execute(context)
+
+      expect(vscode.env.clipboard.writeText).toHaveBeenCalledWith('@src/file.ts#L5-8')
+    })
+
     it('should use basename when file is outside workspace', async () => {
       mockWorkspaceFolders([
         { uri: vscode.Uri.file('/other-workspace'), name: 'other', index: 0 },
@@ -115,7 +131,7 @@ describe('copyReferenceRefactoring', () => {
 
       await copyReferenceRefactoring.execute(context)
 
-      expect(vscode.env.clipboard.writeText).toHaveBeenCalledWith('@file.ts#L1-6')
+      expect(vscode.env.clipboard.writeText).toHaveBeenCalledWith('@file.ts#L1-5')
     })
 
     it('should use basename when no workspace folders', async () => {
@@ -140,7 +156,7 @@ describe('copyReferenceRefactoring', () => {
       await copyReferenceRefactoring.execute(context)
 
       expect(vscode.env.clipboard.writeText).toHaveBeenCalledWith(
-        '@src/features/auth/components/LoginForm.tsx#L1-51',
+        '@src/features/auth/components/LoginForm.tsx#L1-50',
       )
     })
   })
