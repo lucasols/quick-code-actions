@@ -60,6 +60,11 @@
         "category": "Quick Code Actions"
       },
       {
+        "command": "quickCodeActions.addToClaudeCode",
+        "title": "⚡ Add to Claude Code",
+        "category": "Quick Code Actions"
+      },
+      {
         "command": "quickCodeActions.moveFileTo",
         "title": "Move File To...",
         "category": "Quick Code Actions"
@@ -85,6 +90,9 @@
           "command": "quickCodeActions.copyReference"
         },
         {
+          "command": "quickCodeActions.addToClaudeCode"
+        },
+        {
           "command": "quickCodeActions.moveFileTo",
           "when": "editorLangId =~ /^(javascript|javascriptreact|typescript|typescriptreact)$/"
         },
@@ -100,6 +108,10 @@
       "editor/context": [
         {
           "command": "quickCodeActions.copyReference",
+          "group": "z_quickCodeActions"
+        },
+        {
+          "command": "quickCodeActions.addToClaudeCode",
           "group": "z_quickCodeActions"
         },
         {
