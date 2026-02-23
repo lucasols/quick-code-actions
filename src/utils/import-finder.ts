@@ -1,7 +1,7 @@
 import * as fs from 'fs/promises'
 import * as path from 'path'
-import * as ts from 'typescript'
 import * as vscode from 'vscode'
+import { getTs } from './get-ts'
 import type { TsConfig } from './tsconfig-utils'
 import { getAliasForPath, resolveAliasToPath } from './tsconfig-utils'
 
@@ -11,7 +11,9 @@ export interface ImportInfo {
   end: number
 }
 
-export function parseImports(content: string): ImportInfo[] {
+export async function parseImports(content: string): Promise<ImportInfo[]> {
+  const ts = await getTs()
+
   const sourceFile = ts.createSourceFile(
     'temp.ts',
     content,
@@ -22,7 +24,7 @@ export function parseImports(content: string): ImportInfo[] {
 
   const imports: ImportInfo[] = []
 
-  function visit(node: ts.Node) {
+  function visit(node: import('typescript').Node) {
     if (ts.isImportDeclaration(node)) {
       if (ts.isStringLiteral(node.moduleSpecifier)) {
         imports.push({
@@ -131,7 +133,7 @@ export async function findFilesImporting(
 
     try {
       const content = await fs.readFile(file.fsPath, 'utf-8')
-      const imports = parseImports(content)
+      const imports = await parseImports(content)
 
       const matchingImports = imports.filter((imp) => {
         if (targetAlias && imp.importPath === targetAlias) {

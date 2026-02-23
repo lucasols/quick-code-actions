@@ -21,7 +21,7 @@ export async function renameExportCommand(): Promise<void> {
   }
 
   const content = document.getText()
-  const exports = extractExports(content)
+  const exports = await extractExports(content)
 
   if (exports.length === 0) {
     vscode.window.showErrorMessage('No exports found in this file')

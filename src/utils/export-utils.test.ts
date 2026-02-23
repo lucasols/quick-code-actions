@@ -3,9 +3,9 @@ import { extractExports, resolveMainExport } from './export-utils'
 
 describe('export-utils', () => {
   describe('extractExports', () => {
-    it('should extract exported function', () => {
+    it('should extract exported function', async () => {
       const code = 'export function myFunction() {}'
-      const exports = extractExports(code)
+      const exports = await extractExports(code)
       expect(exports).toHaveLength(1)
       expect(exports[0]).toMatchObject({
         name: 'myFunction',
@@ -13,9 +13,9 @@ describe('export-utils', () => {
       })
     })
 
-    it('should extract exported async function', () => {
+    it('should extract exported async function', async () => {
       const code = 'export async function fetchData() {}'
-      const exports = extractExports(code)
+      const exports = await extractExports(code)
       expect(exports).toHaveLength(1)
       expect(exports[0]).toMatchObject({
         name: 'fetchData',
@@ -23,9 +23,9 @@ describe('export-utils', () => {
       })
     })
 
-    it('should extract exported class', () => {
+    it('should extract exported class', async () => {
       const code = 'export class MyClass {}'
-      const exports = extractExports(code)
+      const exports = await extractExports(code)
       expect(exports).toHaveLength(1)
       expect(exports[0]).toMatchObject({
         name: 'MyClass',
@@ -33,9 +33,9 @@ describe('export-utils', () => {
       })
     })
 
-    it('should extract exported const', () => {
+    it('should extract exported const', async () => {
       const code = 'export const myConst = 42'
-      const exports = extractExports(code)
+      const exports = await extractExports(code)
       expect(exports).toHaveLength(1)
       expect(exports[0]).toMatchObject({
         name: 'myConst',
@@ -43,9 +43,9 @@ describe('export-utils', () => {
       })
     })
 
-    it('should extract exported let', () => {
+    it('should extract exported let', async () => {
       const code = 'export let myVar = "hello"'
-      const exports = extractExports(code)
+      const exports = await extractExports(code)
       expect(exports).toHaveLength(1)
       expect(exports[0]).toMatchObject({
         name: 'myVar',
@@ -53,9 +53,9 @@ describe('export-utils', () => {
       })
     })
 
-    it('should extract exported interface as type', () => {
+    it('should extract exported interface as type', async () => {
       const code = 'export interface MyInterface { name: string }'
-      const exports = extractExports(code)
+      const exports = await extractExports(code)
       expect(exports).toHaveLength(1)
       expect(exports[0]).toMatchObject({
         name: 'MyInterface',
@@ -63,9 +63,9 @@ describe('export-utils', () => {
       })
     })
 
-    it('should extract exported type alias as type', () => {
+    it('should extract exported type alias as type', async () => {
       const code = 'export type MyType = string | number'
-      const exports = extractExports(code)
+      const exports = await extractExports(code)
       expect(exports).toHaveLength(1)
       expect(exports[0]).toMatchObject({
         name: 'MyType',
@@ -73,9 +73,9 @@ describe('export-utils', () => {
       })
     })
 
-    it('should extract exported enum', () => {
+    it('should extract exported enum', async () => {
       const code = 'export enum Status { Active, Inactive }'
-      const exports = extractExports(code)
+      const exports = await extractExports(code)
       expect(exports).toHaveLength(1)
       expect(exports[0]).toMatchObject({
         name: 'Status',
@@ -83,34 +83,34 @@ describe('export-utils', () => {
       })
     })
 
-    it('should extract multiple exports', () => {
+    it('should extract multiple exports', async () => {
       const code = `
         export function helperFunc() {}
         export interface Config { key: string }
         export const VALUE = 42
       `
-      const exports = extractExports(code)
+      const exports = await extractExports(code)
       expect(exports).toHaveLength(3)
       expect(exports.map((e) => e.name)).toEqual(['helperFunc', 'Config', 'VALUE'])
     })
 
-    it('should extract named exports from export declaration', () => {
+    it('should extract named exports from export declaration', async () => {
       const code = `
         const foo = 1
         const bar = 2
         export { foo, bar }
       `
-      const exports = extractExports(code)
+      const exports = await extractExports(code)
       expect(exports).toHaveLength(2)
       expect(exports.map((e) => e.name)).toEqual(['foo', 'bar'])
     })
 
-    it('should mark export type declarations as type', () => {
+    it('should mark export type declarations as type', async () => {
       const code = `
         interface Foo {}
         export type { Foo }
       `
-      const exports = extractExports(code)
+      const exports = await extractExports(code)
       expect(exports).toHaveLength(1)
       expect(exports[0]).toMatchObject({
         name: 'Foo',
@@ -118,38 +118,38 @@ describe('export-utils', () => {
       })
     })
 
-    it('should mark individual type-only export specifiers as type', () => {
+    it('should mark individual type-only export specifiers as type', async () => {
       const code = `
         interface Foo {}
         const bar = 1
         export { type Foo, bar }
       `
-      const exports = extractExports(code)
+      const exports = await extractExports(code)
       expect(exports).toHaveLength(2)
       expect(exports[0]).toMatchObject({ name: 'Foo', isType: true })
       expect(exports[1]).toMatchObject({ name: 'bar', isType: false })
     })
 
-    it('should not extract non-exported declarations', () => {
+    it('should not extract non-exported declarations', async () => {
       const code = `
         function privateFunc() {}
         const privateConst = 42
         export function publicFunc() {}
       `
-      const exports = extractExports(code)
+      const exports = await extractExports(code)
       expect(exports).toHaveLength(1)
       expect(exports[0]?.name).toBe('publicFunc')
     })
 
-    it('should not extract re-exports', () => {
+    it('should not extract re-exports', async () => {
       const code = `export { something } from './other'`
-      const exports = extractExports(code)
+      const exports = await extractExports(code)
       expect(exports).toHaveLength(0)
     })
 
-    it('should extract default exported function with name', () => {
+    it('should extract default exported function with name', async () => {
       const code = 'export default function MyComponent() {}'
-      const exports = extractExports(code)
+      const exports = await extractExports(code)
       expect(exports).toHaveLength(1)
       expect(exports[0]).toMatchObject({
         name: 'MyComponent',
@@ -157,9 +157,9 @@ describe('export-utils', () => {
       })
     })
 
-    it('should extract default exported class with name', () => {
+    it('should extract default exported class with name', async () => {
       const code = 'export default class MyService {}'
-      const exports = extractExports(code)
+      const exports = await extractExports(code)
       expect(exports).toHaveLength(1)
       expect(exports[0]).toMatchObject({
         name: 'MyService',
@@ -167,45 +167,45 @@ describe('export-utils', () => {
       })
     })
 
-    it('should not extract anonymous default export', () => {
+    it('should not extract anonymous default export', async () => {
       const code = 'export default function() {}'
-      const exports = extractExports(code)
+      const exports = await extractExports(code)
       expect(exports).toHaveLength(0)
     })
 
-    it('should have correct name offsets', () => {
+    it('should have correct name offsets', async () => {
       const code = 'export function myFunc() {}'
-      const exports = extractExports(code)
+      const exports = await extractExports(code)
       expect(exports).toHaveLength(1)
       const exp = exports[0]
       expect(exp).toBeDefined()
       expect(code.slice(exp?.nameStart, exp?.nameEnd)).toBe('myFunc')
     })
 
-    it('should have correct declaration offsets', () => {
+    it('should have correct declaration offsets', async () => {
       const code = 'export function myFunc() { return 1 }'
-      const exports = extractExports(code)
+      const exports = await extractExports(code)
       expect(exports).toHaveLength(1)
       const exp = exports[0]
       expect(exp).toBeDefined()
       expect(code.slice(exp?.declarationStart, exp?.declarationEnd)).toBe(code)
     })
 
-    it('should extract multiple variable declarations in one statement', () => {
+    it('should extract multiple variable declarations in one statement', async () => {
       const code = 'export const a = 1, b = 2'
-      const exports = extractExports(code)
+      const exports = await extractExports(code)
       expect(exports).toHaveLength(2)
       expect(exports.map((e) => e.name)).toEqual(['a', 'b'])
     })
 
-    it('should handle mixed type and value exports', () => {
+    it('should handle mixed type and value exports', async () => {
       const code = `
         export interface UserProps { name: string }
         export type UserId = string
         export function createUser() {}
         export const DEFAULT_NAME = 'test'
       `
-      const exports = extractExports(code)
+      const exports = await extractExports(code)
       expect(exports).toHaveLength(4)
       expect(exports.filter((e) => e.isType)).toHaveLength(2)
       expect(exports.filter((e) => !e.isType)).toHaveLength(2)

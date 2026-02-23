@@ -1,4 +1,4 @@
-import * as ts from 'typescript'
+import { getTs } from './get-ts'
 
 export function generateImportStatement(
   importPath: string,
@@ -11,12 +11,8 @@ export function generateImportStatement(
   return `import { ${names.join(', ')} } from '${importPath}'`
 }
 
-function hasExportModifier(node: ts.Node): boolean {
-  const modifiers = ts.canHaveModifiers(node) ? ts.getModifiers(node) : undefined
-  return modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword) ?? false
-}
-
-export function generateExportStatement(code: string): string {
+export async function generateExportStatement(code: string): Promise<string> {
+  const ts = await getTs()
   const trimmedCode = code.trim()
 
   const sourceFile = ts.createSourceFile(
@@ -37,7 +33,7 @@ export function generateExportStatement(code: string): string {
       ts.isEnumDeclaration(statement) ||
       ts.isVariableStatement(statement)
 
-    if (isDeclaration && !hasExportModifier(statement)) {
+    if (isDeclaration && !hasExportModifier(ts, statement)) {
       allExported = false
       break
     }
@@ -48,4 +44,12 @@ export function generateExportStatement(code: string): string {
   }
 
   return `export ${trimmedCode}\n`
+}
+
+function hasExportModifier(
+  ts: typeof import('typescript'),
+  node: import('typescript').Node,
+): boolean {
+  const modifiers = ts.canHaveModifiers(node) ? ts.getModifiers(node) : undefined
+  return modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword) ?? false
 }

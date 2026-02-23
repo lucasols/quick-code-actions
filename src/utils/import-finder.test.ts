@@ -4,85 +4,85 @@ import type { TsConfig } from './tsconfig-utils'
 
 describe('import-finder', () => {
   describe('parseImports', () => {
-    it('should parse static import', () => {
+    it('should parse static import', async () => {
       const code = `import { foo } from './foo'`
-      const imports = parseImports(code)
+      const imports = await parseImports(code)
 
       expect(imports).toHaveLength(1)
       expect(imports.at(0)?.importPath).toBe('./foo')
     })
 
-    it('should parse default import', () => {
+    it('should parse default import', async () => {
       const code = `import foo from './foo'`
-      const imports = parseImports(code)
+      const imports = await parseImports(code)
 
       expect(imports).toHaveLength(1)
       expect(imports.at(0)?.importPath).toBe('./foo')
     })
 
-    it('should parse namespace import', () => {
+    it('should parse namespace import', async () => {
       const code = `import * as foo from './foo'`
-      const imports = parseImports(code)
+      const imports = await parseImports(code)
 
       expect(imports).toHaveLength(1)
       expect(imports.at(0)?.importPath).toBe('./foo')
     })
 
-    it('should parse type-only import', () => {
+    it('should parse type-only import', async () => {
       const code = `import type { Foo } from './foo'`
-      const imports = parseImports(code)
+      const imports = await parseImports(code)
 
       expect(imports).toHaveLength(1)
       expect(imports.at(0)?.importPath).toBe('./foo')
     })
 
-    it('should parse re-export', () => {
+    it('should parse re-export', async () => {
       const code = `export { foo } from './foo'`
-      const imports = parseImports(code)
+      const imports = await parseImports(code)
 
       expect(imports).toHaveLength(1)
       expect(imports.at(0)?.importPath).toBe('./foo')
     })
 
-    it('should parse type-only re-export', () => {
+    it('should parse type-only re-export', async () => {
       const code = `export type { Foo } from './foo'`
-      const imports = parseImports(code)
+      const imports = await parseImports(code)
 
       expect(imports).toHaveLength(1)
       expect(imports.at(0)?.importPath).toBe('./foo')
     })
 
-    it('should parse dynamic import', () => {
+    it('should parse dynamic import', async () => {
       const code = `const foo = import('./foo')`
-      const imports = parseImports(code)
+      const imports = await parseImports(code)
 
       expect(imports).toHaveLength(1)
       expect(imports.at(0)?.importPath).toBe('./foo')
     })
 
-    it('should parse require', () => {
+    it('should parse require', async () => {
       const code = `const foo = require('./foo')`
-      const imports = parseImports(code)
+      const imports = await parseImports(code)
 
       expect(imports).toHaveLength(1)
       expect(imports.at(0)?.importPath).toBe('./foo')
     })
 
-    it('should parse multiple imports', () => {
+    it('should parse multiple imports', async () => {
       const code = `
         import { a } from './a'
         import { b } from './b'
         export { c } from './c'
       `
-      const imports = parseImports(code)
+      const imports = await parseImports(code)
 
       expect(imports).toHaveLength(3)
       expect(imports.map((i) => i.importPath)).toEqual(['./a', './b', './c'])
     })
 
-    it('should capture correct positions', () => {
+    it('should capture correct positions', async () => {
       const code = `import { foo } from './foo'`
-      const imports = parseImports(code)
+      const imports = await parseImports(code)
       const firstImport = imports.at(0)
 
       expect(firstImport).toBeDefined()
@@ -91,25 +91,25 @@ describe('import-finder', () => {
       expect(code.slice(firstImport?.start, firstImport?.end)).toBe('./foo')
     })
 
-    it('should handle aliased imports', () => {
+    it('should handle aliased imports', async () => {
       const code = `import { foo } from '@utils/foo'`
-      const imports = parseImports(code)
+      const imports = await parseImports(code)
 
       expect(imports).toHaveLength(1)
       expect(imports.at(0)?.importPath).toBe('@utils/foo')
     })
 
-    it('should handle node_modules imports', () => {
+    it('should handle node_modules imports', async () => {
       const code = `import React from 'react'`
-      const imports = parseImports(code)
+      const imports = await parseImports(code)
 
       expect(imports).toHaveLength(1)
       expect(imports.at(0)?.importPath).toBe('react')
     })
 
-    it('should handle side-effect imports', () => {
+    it('should handle side-effect imports', async () => {
       const code = `import './styles.css'`
-      const imports = parseImports(code)
+      const imports = await parseImports(code)
 
       expect(imports).toHaveLength(1)
       expect(imports.at(0)?.importPath).toBe('./styles.css')

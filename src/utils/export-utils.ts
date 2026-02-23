@@ -1,4 +1,4 @@
-import * as ts from 'typescript'
+import { getTs } from './get-ts'
 
 export interface ExportInfo {
   name: string
@@ -9,14 +9,19 @@ export interface ExportInfo {
   declarationEnd: number
 }
 
-function hasExportModifier(node: ts.Node): boolean {
+function hasExportModifier(
+  ts: typeof import('typescript'),
+  node: import('typescript').Node,
+): boolean {
   if (!ts.canHaveModifiers(node)) return false
   const modifiers = ts.getModifiers(node)
   if (!modifiers) return false
   return modifiers.some((m) => m.kind === ts.SyntaxKind.ExportKeyword)
 }
 
-export function extractExports(code: string): ExportInfo[] {
+export async function extractExports(code: string): Promise<ExportInfo[]> {
+  const ts = await getTs()
+
   const sourceFile = ts.createSourceFile(
     'temp.ts',
     code,
@@ -27,8 +32,8 @@ export function extractExports(code: string): ExportInfo[] {
 
   const exports: ExportInfo[] = []
 
-  function visit(node: ts.Node) {
-    if (ts.isFunctionDeclaration(node) && node.name && hasExportModifier(node)) {
+  function visit(node: import('typescript').Node) {
+    if (ts.isFunctionDeclaration(node) && node.name && hasExportModifier(ts, node)) {
       exports.push({
         name: node.name.text,
         isType: false,
@@ -37,7 +42,7 @@ export function extractExports(code: string): ExportInfo[] {
         declarationStart: node.getStart(sourceFile),
         declarationEnd: node.getEnd(),
       })
-    } else if (ts.isClassDeclaration(node) && node.name && hasExportModifier(node)) {
+    } else if (ts.isClassDeclaration(node) && node.name && hasExportModifier(ts, node)) {
       exports.push({
         name: node.name.text,
         isType: false,
@@ -46,7 +51,7 @@ export function extractExports(code: string): ExportInfo[] {
         declarationStart: node.getStart(sourceFile),
         declarationEnd: node.getEnd(),
       })
-    } else if (ts.isVariableStatement(node) && hasExportModifier(node)) {
+    } else if (ts.isVariableStatement(node) && hasExportModifier(ts, node)) {
       for (const decl of node.declarationList.declarations) {
         if (ts.isIdentifier(decl.name)) {
           exports.push({
@@ -59,7 +64,7 @@ export function extractExports(code: string): ExportInfo[] {
           })
         }
       }
-    } else if (ts.isEnumDeclaration(node) && hasExportModifier(node)) {
+    } else if (ts.isEnumDeclaration(node) && hasExportModifier(ts, node)) {
       exports.push({
         name: node.name.text,
         isType: false,
@@ -68,7 +73,7 @@ export function extractExports(code: string): ExportInfo[] {
         declarationStart: node.getStart(sourceFile),
         declarationEnd: node.getEnd(),
       })
-    } else if (ts.isInterfaceDeclaration(node) && hasExportModifier(node)) {
+    } else if (ts.isInterfaceDeclaration(node) && hasExportModifier(ts, node)) {
       exports.push({
         name: node.name.text,
         isType: true,
@@ -77,7 +82,7 @@ export function extractExports(code: string): ExportInfo[] {
         declarationStart: node.getStart(sourceFile),
         declarationEnd: node.getEnd(),
       })
-    } else if (ts.isTypeAliasDeclaration(node) && hasExportModifier(node)) {
+    } else if (ts.isTypeAliasDeclaration(node) && hasExportModifier(ts, node)) {
       exports.push({
         name: node.name.text,
         isType: true,

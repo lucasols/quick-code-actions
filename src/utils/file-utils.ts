@@ -22,12 +22,12 @@ export function toKebabCase(str: string): string {
     .toLowerCase()
 }
 
-export function suggestFileName(
+export async function suggestFileName(
   selectedText: string,
   languageId: SupportedLanguageId,
-): string {
+): Promise<string> {
   const extension = getExtensionForLanguage(languageId)
-  const names = extractDeclarationNames(selectedText)
+  const names = await extractDeclarationNames(selectedText)
   const firstName = names[0]
 
   if (firstName) {

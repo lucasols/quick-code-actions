@@ -30,55 +30,55 @@ describe('file-utils', () => {
   })
 
   describe('suggestFileName', () => {
-    it('should extract name from function declaration', () => {
+    it('should extract name from function declaration', async () => {
       const code = 'function calculateTotal() { return 0 }'
-      expect(suggestFileName(code, 'typescript')).toBe('./calculate-total.ts')
+      expect(await suggestFileName(code, 'typescript')).toBe('./calculate-total.ts')
     })
 
-    it('should extract name from async function declaration', () => {
+    it('should extract name from async function declaration', async () => {
       const code = 'async function fetchData() { return [] }'
-      expect(suggestFileName(code, 'typescript')).toBe('./fetch-data.ts')
+      expect(await suggestFileName(code, 'typescript')).toBe('./fetch-data.ts')
     })
 
-    it('should extract name from class declaration', () => {
+    it('should extract name from class declaration', async () => {
       const code = 'class UserService { }'
-      expect(suggestFileName(code, 'typescript')).toBe('./user-service.ts')
+      expect(await suggestFileName(code, 'typescript')).toBe('./user-service.ts')
     })
 
-    it('should extract name from const declaration', () => {
+    it('should extract name from const declaration', async () => {
       const code = 'const myHelper = () => {}'
-      expect(suggestFileName(code, 'typescript')).toBe('./my-helper.ts')
+      expect(await suggestFileName(code, 'typescript')).toBe('./my-helper.ts')
     })
 
-    it('should extract name from interface declaration', () => {
+    it('should extract name from interface declaration', async () => {
       const code = 'interface UserData { name: string }'
-      expect(suggestFileName(code, 'typescript')).toBe('./user-data.ts')
+      expect(await suggestFileName(code, 'typescript')).toBe('./user-data.ts')
     })
 
-    it('should extract name from type declaration', () => {
+    it('should extract name from type declaration', async () => {
       const code = 'type ResponseType = { data: unknown }'
-      expect(suggestFileName(code, 'typescript')).toBe('./response-type.ts')
+      expect(await suggestFileName(code, 'typescript')).toBe('./response-type.ts')
     })
 
-    it('should extract name from export function', () => {
+    it('should extract name from export function', async () => {
       const code = 'export function helperFunc() {}'
-      expect(suggestFileName(code, 'typescript')).toBe('./helper-func.ts')
+      expect(await suggestFileName(code, 'typescript')).toBe('./helper-func.ts')
     })
 
-    it('should return default name when no declaration found', () => {
+    it('should return default name when no declaration found', async () => {
       const code = '{ foo: "bar" }'
-      expect(suggestFileName(code, 'typescript')).toBe('./extracted.ts')
+      expect(await suggestFileName(code, 'typescript')).toBe('./extracted.ts')
     })
 
-    it('should use correct extension for different languages', () => {
+    it('should use correct extension for different languages', async () => {
       const code = 'function MyComponent() { return <div /> }'
-      expect(suggestFileName(code, 'typescriptreact')).toBe('./my-component.tsx')
-      expect(suggestFileName(code, 'javascriptreact')).toBe('./my-component.jsx')
+      expect(await suggestFileName(code, 'typescriptreact')).toBe('./my-component.tsx')
+      expect(await suggestFileName(code, 'javascriptreact')).toBe('./my-component.jsx')
     })
 
-    it('should convert PascalCase to kebab-case', () => {
+    it('should convert PascalCase to kebab-case', async () => {
       const code = 'class MyAwesomeService {}'
-      expect(suggestFileName(code, 'typescript')).toBe('./my-awesome-service.ts')
+      expect(await suggestFileName(code, 'typescript')).toBe('./my-awesome-service.ts')
     })
   })
 
@@ -155,89 +155,89 @@ describe('file-utils', () => {
 
 describe('ast-utils', () => {
   describe('extractDeclarationNames', () => {
-    it('should extract function name', () => {
-      expect(extractDeclarationNames('function myFunc() {}')).toEqual(['myFunc'])
+    it('should extract function name', async () => {
+      expect(await extractDeclarationNames('function myFunc() {}')).toEqual(['myFunc'])
     })
 
-    it('should extract async function name', () => {
-      expect(extractDeclarationNames('async function fetchData() {}')).toEqual([
+    it('should extract async function name', async () => {
+      expect(await extractDeclarationNames('async function fetchData() {}')).toEqual([
         'fetchData',
       ])
     })
 
-    it('should extract exported function name', () => {
-      expect(extractDeclarationNames('export function helper() {}')).toEqual([
+    it('should extract exported function name', async () => {
+      expect(await extractDeclarationNames('export function helper() {}')).toEqual([
         'helper',
       ])
     })
 
-    it('should extract const name', () => {
-      expect(extractDeclarationNames('const myConst = 123')).toEqual(['myConst'])
+    it('should extract const name', async () => {
+      expect(await extractDeclarationNames('const myConst = 123')).toEqual(['myConst'])
     })
 
-    it('should extract class name', () => {
-      expect(extractDeclarationNames('class MyClass {}')).toEqual(['MyClass'])
+    it('should extract class name', async () => {
+      expect(await extractDeclarationNames('class MyClass {}')).toEqual(['MyClass'])
     })
 
-    it('should extract interface name', () => {
-      expect(extractDeclarationNames('interface MyInterface {}')).toEqual([
+    it('should extract interface name', async () => {
+      expect(await extractDeclarationNames('interface MyInterface {}')).toEqual([
         'MyInterface',
       ])
     })
 
-    it('should extract type name', () => {
-      expect(extractDeclarationNames('type MyType = string')).toEqual(['MyType'])
+    it('should extract type name', async () => {
+      expect(await extractDeclarationNames('type MyType = string')).toEqual(['MyType'])
     })
 
-    it('should extract enum name', () => {
-      expect(extractDeclarationNames('enum Status { Active }')).toEqual([
+    it('should extract enum name', async () => {
+      expect(await extractDeclarationNames('enum Status { Active }')).toEqual([
         'Status',
       ])
     })
 
-    it('should return empty array for plain expressions', () => {
-      expect(extractDeclarationNames('1 + 2')).toEqual([])
+    it('should return empty array for plain expressions', async () => {
+      expect(await extractDeclarationNames('1 + 2')).toEqual([])
     })
 
-    it('should extract multiple declarations', () => {
+    it('should extract multiple declarations', async () => {
       const code = `
         const a = 1
         function b() {}
         class C {}
       `
-      expect(extractDeclarationNames(code)).toEqual(['a', 'b', 'C'])
+      expect(await extractDeclarationNames(code)).toEqual(['a', 'b', 'C'])
     })
   })
 
   describe('findReferencedNames', () => {
-    it('should find referenced names in code', () => {
-      expect(findReferencedNames('console.log(x)', ['x'])).toEqual(['x'])
+    it('should find referenced names in code', async () => {
+      expect(await findReferencedNames('console.log(x)', ['x'])).toEqual(['x'])
     })
 
-    it('should return empty when name is not referenced', () => {
-      expect(findReferencedNames('console.log(y)', ['x'])).toEqual([])
+    it('should return empty when name is not referenced', async () => {
+      expect(await findReferencedNames('console.log(y)', ['x'])).toEqual([])
     })
 
-    it('should not match declarations as references', () => {
-      expect(findReferencedNames('const foo = 1', ['foo'])).toEqual([])
+    it('should not match declarations as references', async () => {
+      expect(await findReferencedNames('const foo = 1', ['foo'])).toEqual([])
     })
 
-    it('should find function calls', () => {
-      expect(findReferencedNames('helper()', ['helper'])).toEqual(['helper'])
+    it('should find function calls', async () => {
+      expect(await findReferencedNames('helper()', ['helper'])).toEqual(['helper'])
     })
 
-    it('should find multiple references', () => {
+    it('should find multiple references', async () => {
       const code = 'console.log(a, b)'
-      expect(findReferencedNames(code, ['a', 'b', 'c'])).toEqual(['a', 'b'])
+      expect(await findReferencedNames(code, ['a', 'b', 'c'])).toEqual(['a', 'b'])
     })
 
-    it('should not match parameter declarations', () => {
-      expect(findReferencedNames('function foo(x) {}', ['x'])).toEqual([])
+    it('should not match parameter declarations', async () => {
+      expect(await findReferencedNames('function foo(x) {}', ['x'])).toEqual([])
     })
 
-    it('should find references inside functions', () => {
+    it('should find references inside functions', async () => {
       const code = 'function test() { return helper() }'
-      expect(findReferencedNames(code, ['helper'])).toEqual(['helper'])
+      expect(await findReferencedNames(code, ['helper'])).toEqual(['helper'])
     })
   })
 })

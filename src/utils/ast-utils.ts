@@ -1,6 +1,8 @@
-import * as ts from 'typescript'
+import { getTs } from './get-ts'
 
-export function extractDeclarationNames(code: string): string[] {
+export async function extractDeclarationNames(code: string): Promise<string[]> {
+  const ts = await getTs()
+
   const sourceFile = ts.createSourceFile(
     'temp.ts',
     code,
@@ -10,7 +12,7 @@ export function extractDeclarationNames(code: string): string[] {
 
   const names: string[] = []
 
-  function visit(node: ts.Node) {
+  function visit(node: import('typescript').Node) {
     if (ts.isFunctionDeclaration(node) && node.name) {
       names.push(node.name.text)
     } else if (ts.isClassDeclaration(node) && node.name) {
@@ -36,11 +38,13 @@ export function extractDeclarationNames(code: string): string[] {
   return names
 }
 
-export function findReferencedNames(
+export async function findReferencedNames(
   code: string,
   namesToFind: string[],
-): string[] {
+): Promise<string[]> {
   if (namesToFind.length === 0) return []
+
+  const ts = await getTs()
 
   const sourceFile = ts.createSourceFile(
     'temp.ts',
@@ -52,7 +56,7 @@ export function findReferencedNames(
   const nameSet = new Set(namesToFind)
   const foundNames = new Set<string>()
 
-  function visit(node: ts.Node) {
+  function visit(node: import('typescript').Node) {
     if (ts.isIdentifier(node) && nameSet.has(node.text)) {
       const parent = node.parent
 

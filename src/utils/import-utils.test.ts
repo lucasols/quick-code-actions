@@ -25,71 +25,71 @@ describe('import-utils', () => {
   })
 
   describe('generateExportStatement', () => {
-    it('should add export to function declaration', () => {
+    it('should add export to function declaration', async () => {
       const code = 'function myFunc() { return 1 }'
-      const result = generateExportStatement(code)
+      const result = await generateExportStatement(code)
       expect(result).toBe('export function myFunc() { return 1 }\n')
     })
 
-    it('should add export to async function declaration', () => {
+    it('should add export to async function declaration', async () => {
       const code = 'async function fetchData() { return [] }'
-      const result = generateExportStatement(code)
+      const result = await generateExportStatement(code)
       expect(result).toBe('export async function fetchData() { return [] }\n')
     })
 
-    it('should add export to class declaration', () => {
+    it('should add export to class declaration', async () => {
       const code = 'class MyClass { }'
-      const result = generateExportStatement(code)
+      const result = await generateExportStatement(code)
       expect(result).toBe('export class MyClass { }\n')
     })
 
-    it('should add export to const declaration', () => {
+    it('should add export to const declaration', async () => {
       const code = 'const myConst = 42'
-      const result = generateExportStatement(code)
+      const result = await generateExportStatement(code)
       expect(result).toBe('export const myConst = 42\n')
     })
 
-    it('should add export to let declaration', () => {
+    it('should add export to let declaration', async () => {
       const code = 'let myVar = "hello"'
-      const result = generateExportStatement(code)
+      const result = await generateExportStatement(code)
       expect(result).toBe('export let myVar = "hello"\n')
     })
 
-    it('should add export to interface declaration', () => {
+    it('should add export to interface declaration', async () => {
       const code = 'interface MyInterface { name: string }'
-      const result = generateExportStatement(code)
+      const result = await generateExportStatement(code)
       expect(result).toBe('export interface MyInterface { name: string }\n')
     })
 
-    it('should add export to type declaration', () => {
+    it('should add export to type declaration', async () => {
       const code = 'type MyType = string | number'
-      const result = generateExportStatement(code)
+      const result = await generateExportStatement(code)
       expect(result).toBe('export type MyType = string | number\n')
     })
 
-    it('should not duplicate export keyword', () => {
+    it('should not duplicate export keyword', async () => {
       const code = 'export function alreadyExported() {}'
-      const result = generateExportStatement(code)
+      const result = await generateExportStatement(code)
       expect(result).toBe('export function alreadyExported() {}\n')
     })
 
-    it('should add export to enum declaration', () => {
+    it('should add export to enum declaration', async () => {
       const code = 'enum Status { Active, Inactive }'
-      const result = generateExportStatement(code)
+      const result = await generateExportStatement(code)
       expect(result).toBe('export enum Status { Active, Inactive }\n')
     })
 
-    it('should trim whitespace from code', () => {
+    it('should trim whitespace from code', async () => {
       const code = '  function myFunc() {}  '
-      const result = generateExportStatement(code)
+      const result = await generateExportStatement(code)
       expect(result).toBe('export function myFunc() {}\n')
     })
 
-    it('should handle multiline code', () => {
+    it('should handle multiline code', async () => {
       const code = `function myFunc() {
   return 1
 }`
-      const result = generateExportStatement(code)
+      const result = await generateExportStatement(code)
       expect(result).toBe(`export function myFunc() {
   return 1
 }\n`)

@@ -29,7 +29,7 @@ async function updateImportsInRenamedFile(
   try {
     const document = await vscode.workspace.openTextDocument(sourceUri)
     const content = document.getText()
-    const imports = parseImports(content)
+    const imports = await parseImports(content)
 
     for (const imp of imports) {
       if (!imp.importPath.startsWith('.')) {

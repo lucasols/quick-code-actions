@@ -274,7 +274,7 @@ async function updateImportsInMovedFile(
 
     const { parseImports, resolveImportPath } = await import('../utils/import-finder')
 
-    const imports = parseImports(content)
+    const imports = await parseImports(content)
 
     for (const imp of imports) {
       if (!imp.importPath.startsWith('.')) {

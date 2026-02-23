@@ -52,7 +52,7 @@ export const extractToFileRefactoring: Refactoring = {
 
     const languageId: SupportedLanguageId = document.languageId
 
-    const suggestedName = suggestFileName(selectedText, languageId)
+    const suggestedName = await suggestFileName(selectedText, languageId)
 
     const inputPath = await vscode.window.showInputBox({
       prompt: 'Enter the path for the new file (relative to current file)',
@@ -85,8 +85,8 @@ export const extractToFileRefactoring: Refactoring = {
       // File does not exist, proceed
     }
 
-    const declaredNames = extractDeclarationNames(selectedText)
-    const newFileContent = generateExportStatement(selectedText)
+    const declaredNames = await extractDeclarationNames(selectedText)
+    const newFileContent = await generateExportStatement(selectedText)
 
     const encoder = new TextEncoder()
     await vscode.workspace.fs.writeFile(
@@ -98,7 +98,7 @@ export const extractToFileRefactoring: Refactoring = {
 
     const documentText = document.getText()
     const remainingCode = documentText.replace(selectedText, '')
-    const referencedNames = findReferencedNames(remainingCode, declaredNames)
+    const referencedNames = await findReferencedNames(remainingCode, declaredNames)
 
     if (referencedNames.length > 0) {
       const importPath = getRelativeImportPath(currentFilePath, targetPath)
