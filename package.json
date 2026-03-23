@@ -14,7 +14,8 @@
     "dev": "tsup --watch --minify --dts",
     "test": "vitest run",
     "test:watch": "vitest",
-    "install-extension": "code --install-extension $(ls -t quick-code-actions-*.vsix | head -n 1)"
+    "install-extension": "code --install-extension $(ls -t quick-code-actions-*.vsix | head -n 1)",
+    "build-and-install": "pnpm build && pnpm install-extension"
   },
   "keywords": [
     "refactoring",
@@ -60,11 +61,6 @@
         "category": "Quick Code Actions"
       },
       {
-        "command": "quickCodeActions.addToClaudeCode",
-        "title": "⚡ Add to Claude Code",
-        "category": "Quick Code Actions"
-      },
-      {
         "command": "quickCodeActions.moveFileTo",
         "title": "Move File To...",
         "category": "Quick Code Actions"
@@ -78,6 +74,11 @@
         "command": "quickCodeActions.renameExport",
         "title": "Rename Export and File",
         "category": "Quick Code Actions"
+      },
+      {
+        "command": "quickCodeActions.copyUncommittedDiff",
+        "title": "Copy Uncommitted Diff",
+        "category": "Quick Code Actions"
       }
     ],
     "menus": {
@@ -90,7 +91,8 @@
           "command": "quickCodeActions.copyReference"
         },
         {
-          "command": "quickCodeActions.addToClaudeCode"
+          "command": "quickCodeActions.copyUncommittedDiff",
+          "when": "editorHasSelection"
         },
         {
           "command": "quickCodeActions.moveFileTo",
@@ -111,7 +113,7 @@
           "group": "z_quickCodeActions"
         },
         {
-          "command": "quickCodeActions.addToClaudeCode",
+          "command": "quickCodeActions.copyUncommittedDiff",
           "group": "z_quickCodeActions"
         },
         {

@@ -3,10 +3,10 @@ import type { Refactoring, RefactoringContext } from './refactorings/types'
 import { SUPPORTED_LANGUAGES } from './refactorings/types'
 import { extractToFileRefactoring } from './refactorings/extract-to-file'
 import { copyReferenceRefactoring } from './refactorings/copy-reference'
-import { addToClaudeCodeRefactoring } from './refactorings/add-to-claude-code'
 import { moveFileToCommand } from './commands/move-file-to'
 import { syncFileNameCommand } from './commands/sync-file-name'
 import { renameExportCommand } from './commands/rename-export'
+import { copyUncommittedDiffRefactoring } from './refactorings/copy-uncommitted-diff'
 
 class QuickCodeActionsProvider implements vscode.CodeActionProvider {
   static readonly providedCodeActionKinds = [
@@ -40,7 +40,7 @@ class QuickCodeActionsProvider implements vscode.CodeActionProvider {
 
 export function activate(context: vscode.ExtensionContext) {
   const codeActionRefactorings = [extractToFileRefactoring]
-  const contextMenuCommands = [copyReferenceRefactoring, addToClaudeCodeRefactoring]
+  const contextMenuCommands = [copyReferenceRefactoring, copyUncommittedDiffRefactoring]
   const allRefactorings = [...codeActionRefactorings, ...contextMenuCommands]
 
   const provider = new QuickCodeActionsProvider(codeActionRefactorings)
