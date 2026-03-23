@@ -16,6 +16,7 @@ pnpm dev           # Watch mode development build
 pnpm build         # Full build: lint → test → create .vsix
 pnpm build:no-test # Build without running tests
 pnpm install-extension  # Install built extension in Cursor
+pnpm build-and-install # Build and install in one step
 ```
 
 To debug the extension: use VS Code's debug launcher (F5) which runs the extension in extensionHost mode.
@@ -49,6 +50,7 @@ Each refactoring is a self-contained object (not a class). The `QuickCodeActions
 ### Testing Patterns
 
 Tests use `jest-mock-vscode` to mock the VS Code API. Common test helpers:
+
 - `createMockDocument()` - Creates mock TextDocument instances
 - `createContext()` - Creates RefactoringContext for testing
 
