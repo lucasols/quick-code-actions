@@ -114,18 +114,17 @@ export const copyUncommittedDiffRefactoring: Refactoring = {
     const startLine = range.start.line + 1
     const endLine = range.end.line + 1
 
-    const [unstagedDiff, stagedDiff] = await Promise.all([
-      execCommand(
-        `git diff -- ${JSON.stringify(relativePath)}`,
-        workspaceFolder,
-      ),
-      execCommand(
+    let fullDiff = await execCommand(
+      `git diff -- ${JSON.stringify(relativePath)}`,
+      workspaceFolder,
+    )
+
+    if (!fullDiff) {
+      fullDiff = await execCommand(
         `git diff --cached -- ${JSON.stringify(relativePath)}`,
         workspaceFolder,
-      ),
-    ])
-
-    const fullDiff = [stagedDiff, unstagedDiff].filter(Boolean).join('\n')
+      )
+    }
 
     if (!fullDiff) {
       vscode.window.setStatusBarMessage('No uncommitted changes found', 3000)
@@ -142,7 +141,7 @@ export const copyUncommittedDiffRefactoring: Refactoring = {
       return
     }
 
-    await vscode.env.clipboard.writeText(filteredDiff)
+    await vscode.env.clipboard.writeText(`\`\`\`diff\n${filteredDiff}\n\`\`\``)
     vscode.window.setStatusBarMessage('Copied uncommitted diff', 3000)
   },
 }
