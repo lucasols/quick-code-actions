@@ -3,6 +3,7 @@ import type { Refactoring, RefactoringContext } from './refactorings/types'
 import { SUPPORTED_LANGUAGES } from './refactorings/types'
 import { extractToFileRefactoring } from './refactorings/extract-to-file'
 import { copyReferenceRefactoring } from './refactorings/copy-reference'
+import { copyFullPathRefactoring } from './refactorings/copy-full-path'
 import { moveFileToCommand } from './commands/move-file-to'
 import { syncFileNameCommand } from './commands/sync-file-name'
 import { renameExportCommand } from './commands/rename-export'
@@ -40,7 +41,11 @@ class QuickCodeActionsProvider implements vscode.CodeActionProvider {
 
 export function activate(context: vscode.ExtensionContext) {
   const codeActionRefactorings = [extractToFileRefactoring]
-  const contextMenuCommands = [copyReferenceRefactoring, copyUncommittedDiffRefactoring]
+  const contextMenuCommands = [
+    copyReferenceRefactoring,
+    copyFullPathRefactoring,
+    copyUncommittedDiffRefactoring,
+  ]
   const allRefactorings = [...codeActionRefactorings, ...contextMenuCommands]
 
   const provider = new QuickCodeActionsProvider(codeActionRefactorings)

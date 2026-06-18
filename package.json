@@ -61,6 +61,11 @@
         "category": "Quick Code Actions"
       },
       {
+        "command": "quickCodeActions.copyFullPath",
+        "title": "⚡ Copy Full Path",
+        "category": "Quick Code Actions"
+      },
+      {
         "command": "quickCodeActions.moveFileTo",
         "title": "Move File To...",
         "category": "Quick Code Actions"
@@ -91,6 +96,9 @@
           "command": "quickCodeActions.copyReference"
         },
         {
+          "command": "quickCodeActions.copyFullPath"
+        },
+        {
           "command": "quickCodeActions.copyUncommittedDiff",
           "when": "editorHasSelection"
         },
@@ -110,6 +118,10 @@
       "editor/context": [
         {
           "command": "quickCodeActions.copyReference",
+          "group": "z_quickCodeActions"
+        },
+        {
+          "command": "quickCodeActions.copyFullPath",
           "group": "z_quickCodeActions"
         },
         {
